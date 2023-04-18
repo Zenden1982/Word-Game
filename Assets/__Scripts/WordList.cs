@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class WordList : MonoBehaviour
 {
-    //dsfdsf
     private static WordList S;
 
     [Header("Set in Inspector")]

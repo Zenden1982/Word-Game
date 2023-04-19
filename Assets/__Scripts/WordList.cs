@@ -27,12 +27,17 @@ public class WordList : MonoBehaviour
         S= this;
     }
 
-    private void Start()
+    private void Init()
     {
         lines = wordListText.text.Split('\n');
         totalLines = lines.Length;
         
         StartCoroutine(ParceLines());
+    }
+
+    static public void INIT()
+    {
+        S.Init();
     }
 
     public IEnumerator ParceLines()
@@ -64,6 +69,8 @@ public class WordList : MonoBehaviour
             }
             longWordCount = longWords.Count;
             wordCount = words.Count;
+
+            gameObject.SendMessage("WordListParseComplete");
         }
 
         

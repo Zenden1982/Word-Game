@@ -67,13 +67,13 @@ public class WordList : MonoBehaviour
                 wordCount = words.Count;
                 yield return null;
             }
-            longWordCount = longWords.Count;
-            wordCount = words.Count;
+            
 
-            gameObject.SendMessage("WordListParseComplete");
+            
         }
-
-        
+        longWordCount = longWords.Count;
+        wordCount = words.Count;
+        gameObject.SendMessage("WordListParseComplete");
     }
 
     static public List<string> GET_WORDS()
@@ -85,11 +85,15 @@ public class WordList : MonoBehaviour
         return (S.words[ndx]);
     }
 
-    static public string GET_LONG_WORD(int ndx)
+    static public List<string> GET_LONG_WORDS()
     {
-        return (S.longWords[ndx]);
+        return (S.longWords);
     }
 
+    static public string GET_LONG_WORD(int ndx)
+    {
+        return S.longWords[ndx];
+    }
     static public int WORD_COUNT
     {
         get { return S.wordCount;}

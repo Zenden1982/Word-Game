@@ -11,7 +11,6 @@ public class WordList : MonoBehaviour
     public int numToParseBeforeYield = 10000;
     public int wordLenghtMin = 3;
     public int wordLenghtMax = 7;
-
     [Header("Setin Dynamically")]
     public int currLine = 0;
     public int totalLines;

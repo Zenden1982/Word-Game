@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class WordLevel
 {
-    public int LevelNum;
+    public int levelNum;
     public int longWordIndex;
     public string word;
 
@@ -47,8 +47,9 @@ public class WordLevel
                 {
                     return false;
                 }
-                else return (false);
+                
             }
+            else return (false);
         }
         return true;
     }

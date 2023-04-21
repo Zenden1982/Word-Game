@@ -7,7 +7,7 @@ using UnityEngine.Rendering;
 public class Letter : MonoBehaviour
 {
     [Header("Set Dynamically")]
-    public TextMeshProUGUI tMesh;
+    public TextMeshPro tMesh;
     public Renderer tRend;
     public bool big = false;
     private char _c;
@@ -15,7 +15,7 @@ public class Letter : MonoBehaviour
 
     private void Awake()
     {
-        tMesh = GetComponentInChildren<TextMeshProUGUI>();
+        tMesh = GetComponentInChildren<TextMeshPro>();
         tRend = tMesh.GetComponent<Renderer>();
         rend = GetComponent<Renderer>();
         visible = false;

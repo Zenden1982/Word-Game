@@ -250,6 +250,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efe162dbb32fa3543b4e8e8dd57b1c2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  prefabLetter: {fileID: 4368339154708032067, guid: b788464df2df2fd4f898a739766b406c, type: 3}
+  wordArea:
+    serializedVersion: 2
+    x: -24
+    y: 19
+    width: 48
+    height: 28
+  letterSize: 1.5
+  showAllWyrds: 1
   mode: 0
   currLevel:
     LevelNum: 0

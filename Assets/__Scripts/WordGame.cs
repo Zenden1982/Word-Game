@@ -26,6 +26,7 @@ public class WordGame : MonoBehaviour
     public Color bigColorDim = new Color(0.8f, 0.8f, 0.8f);
     public Color bigColorSelected = new Color(1f, 0.9f, 0.7f);
     public Vector3 bigLetterCenter = new Vector3(0, -16, 0);
+    public Color[] wyrdPalette;
 
     [Header("Set Dynamically")]
     public GameMode mode = GameMode.preGame;
@@ -34,7 +35,8 @@ public class WordGame : MonoBehaviour
     public List<Wyrd> wyrds;
     public List<Letter> bigLetters;
     public List<Letter> bigLettersActive;
-
+    public string testWord;
+    private string upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private Transform letterAnchor, bigLetterAnchor;
 
     private void Awake()
@@ -144,12 +146,15 @@ public class WordGame : MonoBehaviour
 
                 pos.y -= (i%numRows) * letterSize;
 
+                lett.posImmediate = pos + Vector3.up * (20+i%numRows);
                 lett.pos = pos;
+                lett.timeStart = Time.time + i*0.05f;
 
                 go.transform.localScale = Vector3.one * letterSize;
                 wyrd.Add(lett);
             }
             if (showAllWyrds) { wyrd.visible = true; }
+            wyrd.color = wyrdPalette[word.Length - WordList.WORD_LENGTH_MIN];
             wyrds.Add(wyrd);
 
             if (i%numRows == numRows -1)
@@ -171,7 +176,10 @@ public class WordGame : MonoBehaviour
             go.transform.localScale = Vector3.one * bigLetterSize;
 
             pos = new Vector3(0, -100, 0);
+            lett.posImmediate = pos;
             lett.pos = pos;
+            lett.timeStart = Time.time + currLevel.subWords.Count*0.05f;
+            lett.easingaCuve = Easing.Sin + "-0.18";
             col = bigColorDim;
             lett.color = col;
             lett.visible = true;
@@ -217,5 +225,133 @@ public class WordGame : MonoBehaviour
             pos.y += bigLetterSize*1.25f;
             bigLettersActive[i].pos = pos;
         }
+    }
+
+    private void Update()
+    {
+        Letter ltr;
+        char c;
+
+        switch(mode)
+        {
+            case GameMode.inLevel:
+                foreach (char cIt in Input.inputString)
+                {
+                    c=System.Char.ToUpperInvariant(cIt);
+
+                    if (upperCase.Contains(c))
+                    {
+                        ltr = FindNextLetterByChar(c);
+
+                        if (ltr != null)
+                        {
+                            testWord +=c.ToString();
+
+                            bigLettersActive.Add(ltr);
+                            bigLetters.Remove(ltr);
+                            ltr.color = bigColorSelected;
+
+                            ArrangeBigLetters();
+                        }
+                    }
+                    if (c=='\b')
+                    {
+                        if (bigLettersActive.Count ==  0) return;
+                        if (testWord.Length >1)
+                        {
+                            testWord = testWord.Substring(0, testWord.Length-1);
+                        }
+                        else testWord ="";
+                        ltr = bigLettersActive[bigLettersActive.Count-1];
+
+                        bigLettersActive.Remove(ltr);
+                        bigLetters.Add(ltr);
+                        ltr.color =bigColorDim;
+                        ArrangeBigLetters();
+                    }
+                    if (c == '\n' || c == '\r')
+                        {
+                            CheckWord();
+                        }
+                    if (c == ' ')
+                        {
+                            bigLetters = ShuffleLetters(bigLetters);
+                            ArrangeBigLetters();
+                        }
+                    
+                }
+                break;
+        }
+    }
+
+    Letter FindNextLetterByChar(char c)
+    {
+        foreach(Letter ltr in bigLetters)
+        {
+            if (ltr.c == c)
+            {
+                return ltr;
+            }
+        }
+        return null;
+    }
+
+    public void CheckWord()
+    {
+        string subWord;
+        bool foundTestWord = false;
+
+        List<int > containedWords = new List<int>();
+
+        for (int i = 0; i < currLevel.subWords.Count; i++)
+        {
+            if (wyrds[i].found)
+            {
+                continue;
+            }
+            subWord = currLevel.subWords[i];
+            if (string.Equals(testWord, subWord))
+            {
+                HighlightWyrd(i);
+                //ScoreboardManager.SCORE(wyrds[i],1);
+                foundTestWord = true;
+            } else if (testWord.Contains(subWord))
+            {
+                containedWords.Add(i);
+            }
+        }
+        if (foundTestWord)
+        {
+            int numContained = containedWords.Count;
+            int ndx;
+
+            for (int i= 0; i < containedWords.Count; i++)
+            {
+                ndx = numContained-i-1;
+                HighlightWyrd(containedWords[ndx]);
+                ScoreboardManager.SCORE(wyrds[containedWords[ndx]],i+2);
+            }
+        }
+        ClearBigLettersActive();
+    }
+
+    void HighlightWyrd(int ndx)
+    {
+        wyrds[ndx].found = true;
+
+        wyrds[ndx].color = (wyrds[ndx].color+Color.white)/2f;
+        wyrds[ndx].visible = true;
+    }
+
+    void ClearBigLettersActive()
+    {
+        testWord = "";
+        foreach (Letter ltr in bigLettersActive)
+        {
+            bigLetters.Add(ltr);
+            ltr.color = bigColorDim;
+        }
+        bigLettersActive.Clear();
+        ArrangeBigLetters();
     }
 }
